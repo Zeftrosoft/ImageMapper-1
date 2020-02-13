@@ -62,10 +62,10 @@
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title" style="font-weight: bold;">Enrolled Images</h3>
-                <button class="btn btn-success float-right" style="margin-right:10px;" onClick="refreshEnrolled()">Show Enrolled</button>
+                <button class="btn btn-success float-right" style="margin-right:10px;" onClick="getOnlyClassEnrollImageData()">Show Enrolled</button>
               </div>
               <div class="card-body">
-                <div class="row">
+                <div class="row" id="enroll_container">
                   {% for row in data.data.enroll%}
                   <div class="col-sm-2">
                     <a href="#" onclick="nearMatchImgClicked('enrolled_{{loop.index}}')">

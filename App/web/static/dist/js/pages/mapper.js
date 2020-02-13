@@ -1,5 +1,6 @@
 var nmatch_data = []
 var predicted_data = []
+var enrolled_data = []
 
 var current_page = 1
 var current_data = {}
@@ -13,6 +14,8 @@ function nearMatchImgClicked(image_id) {
 function nMapClick() {
   var img_path = $('#predictimage').attr('src')
   $('#nMatchContainer').html('')
+  console.log(img_path);
+  
   $.each(nmatch_data, function (indx, row) {
     console.log("nMap get clicked");
     console.log(img_path, row[1]);
@@ -60,6 +63,7 @@ function postData(data) {
         }
         else {
           notifyUser('success', json.msg)
+          predictionImageNextClicked()
         }
     },
     error: function (data) {
@@ -97,6 +101,10 @@ function  getNmapDataUrl() {
   return used_host + '/nmap'
 }
 
+function  getOnlyClassEnrollImageDataUrl() {
+  return used_host + '/api/class/enrolled/'
+}
+
 function getnmapdata(){
   $.ajax({
     cache: false,
@@ -122,6 +130,37 @@ function getnmapdata(){
     },
     error: function (data) {
         console.log("Error While Getting Nmatched Data");
+        console.log(data);
+    }
+  });
+}
+
+function getOnlyClassEnrollImageData(){
+  $.ajax({
+    cache: false,
+    type: 'GET',
+    url: getOnlyClassEnrollImageDataUrl()+$('#cid').val(),
+    xhrFields: {
+        // The 'xhrFields' property sets additional fields on the XMLHttpRequest.
+        // This can be used to set the 'withCredentials' property.
+        // Set the value to 'true' if you'd like to pass cookies to the server.
+        // If this is enabled, your server must respond with the header
+        // 'Access-Control-Allow-Credentials: true'.
+        withCredentials: false
+    },
+    success: function (json) {
+        if (!json.status) {
+          console.error('Serverside Error While Geting Enrolled Data For Class');
+          console.error(json.message)
+        }
+        else {
+          enrolled_data = json.data
+          console.log(enrolled_data)
+          initEnrolledData()
+        }
+    },
+    error: function (data) {
+        console.log("Error While Getting Enrolled Data For Class");
         console.log(data);
     }
   });
@@ -163,6 +202,24 @@ function getPredictData(){
         console.log(data);
     }
   });
+}
+
+function initEnrolledData() {
+  $('#enroll_container').html('')
+  $.each(enrolled_data, function (indx, row) {
+    var name = row[3].split('/')[row[3].split('/').length-2]
+    var html = `
+      <div class="col-sm-2">
+        <a href="#" onclick="nearMatchImgClicked('enrolled_${indx}')">
+        <img class="img-fluid enrolled_images" src="${row[3]}" alt="Photo" id='enrolled_${indx}' >
+        </a>  
+        <label style="display: flow-root;" for="user2">
+          ${name}
+        </label>
+      </div>
+    `
+    $('#enroll_container').append(html)
+  })
 }
 
 function initPrediction() {

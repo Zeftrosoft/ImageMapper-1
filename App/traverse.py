@@ -1,6 +1,7 @@
 import os
 import json
 from dbhelper import DBHelper
+import pandas as pd 
 
 class Traverse:
     def init(self):
@@ -67,6 +68,10 @@ class Traverse:
             self.prediction_data = self.prediction_data['recognitions']
             jsonData.close()
         prediction_data = []
+        pred_img_path_lis = []
+        img_path_lis = []
+        indx = []
+        i = 0
         for predict_path in self.prediction_data:
             
             # prediction = {}
@@ -80,16 +85,28 @@ class Traverse:
             temp = predict_path['recognised_ids']
             
             for dir_name in predict_path['recognised_ids']:
+                i = i + 1
                 print(dir_name)
                 enroll_data_path = os.path.join(os.path.dirname(__file__), "web","static","dist","image","classes",str(class_id),"enroll_crops",str(dir_name))
                 image_path = self.enroll_folder_path.format(str(class_id),str(dir_name),sorted(os.listdir(enroll_data_path))[0])
                 print(image_path)
-                matches = helper.getNmatchData(predict_img_path, image_path)
-                print(matches)
-                if len(matches['data']) <= 0:
-                    helper.upsertNmatchData(predict_img_path, image_path)
-            
-            break;
+                pred_img_path_lis.append('"'+predict_img_path+'"')
+                img_path_lis.append('"'+image_path+'"')
+                indx.append(i)
+                #helper.upsertNmatchData(predict_img_path, image_path)
+        
+        dict ={
+            "idnmapped": indx,
+            "predict_image": pred_img_path_lis,
+            "image_path": img_path_lis,
+        }
+        
+        df = pd.DataFrame(dict)
+        print(df.head())
+        csv_path = './data/temp_json.csv'
+        df.to_csv(csv_path, index=False)
+        helper.bulkInsertNearestMatch(csv_path)
+            # break;
                 #prediction['recognised_images'].append(image_path)
             #prediction_data.append(prediction)
         #return prediction_data
@@ -100,4 +117,8 @@ class Traverse:
         corrected_path = self.prediction_folder_path.format(cid,pid,file_name)
         return corrected_path
 
+if __name__ == "__main__":
+    traverse = Traverse()
+    #traverse.data_struct()
+    traverse.scan_json()
                 

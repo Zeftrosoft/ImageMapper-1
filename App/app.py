@@ -115,7 +115,20 @@ def person(cid):
     return render_template('person.html',data=res)
   else:
     return render_template('person.html',data=init_res)
-  
+
+@app.route('/api/class/enrolled/<cid>', methods=['GET'])
+def calss_enrolled_image_data(cid):
+  global global_session
+  error_res = {
+        'status': False,
+        'data' : (),
+        'msg': 'Not Authorize, Please Login'  
+    }
+  if not isLogin():
+    return jsonify(error_res)
+  res_predict = helper.getOnlyClassEnrollImageData(cid)
+  return jsonify(res_predict)
+
 @app.route('/person/<cid>/<pid>', methods=['GET'])
 def person_image(cid,pid):
   global global_session
@@ -129,8 +142,7 @@ def person_image(cid,pid):
     }
   res_enroll = helper.getClassEnrollImageData(cid,pid)
   res_predict = helper.getClassPredictImageData(cid,pid)
-  print(res_enroll)
-  print(res_predict)
+
   res = {}
   if res_enroll['status']:
     res['status'] = True
@@ -167,8 +179,9 @@ def person_image_data(cid,pid):
     return jsonify(error_res)
   res_predict = helper.getClassPredictImageData(cid,pid)
   print("HERE .......................")
-  print(res_predict)
   return jsonify(res_predict)
+
+
 
 # @app.route('/mapper', methods=['POST'])
 # def Mappeerdata():
@@ -235,7 +248,6 @@ def nmatch():
         'title': 'Nmatch'
     }
   res = helper.getAllNmatchData()
-  print(res)
   if res['status']:
     res['title'] = 'Nmatch'
     return jsonify(res)
@@ -263,9 +275,9 @@ def getMailIdFromSession():
 
 def folder_scan():
   pass
-  #help_scan.data_struct()
-  #help_scan.scan_json()
+  help_scan.data_struct()
+  help_scan.scan_json()
 
 if __name__ == "__main__":
-  folder_scan()
-  app.run(debug=True)
+  #folder_scan()
+  app.run(debug=True,host="0.0.0.0")
