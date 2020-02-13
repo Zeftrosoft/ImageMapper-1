@@ -65,7 +65,6 @@ def classes():
         'title': 'Classes'
     }
   res = helper.getClassData()
-  print(res)
   if res['status']:
     res['title'] = 'Classes'
     return render_template('class.html',data=res)
@@ -108,7 +107,6 @@ def person(cid):
         'title': 'Persons'  
     }
   res = helper.getPersonData(cid)
-  print(res)
   if res['status']:
     res['title'] = 'Persons'
     res['currentEmail'] = currentEmail
@@ -160,7 +158,6 @@ def person_image(cid,pid):
     init_res['data']['cid'] = ''
     init_res['data']['pid'] = ''
 
-  print(res)
   if res['status']:
     res['title'] = 'Person Images'
     return render_template('person_image.html',data=res)
@@ -178,7 +175,6 @@ def person_image_data(cid,pid):
   if not isLogin():
     return jsonify(error_res)
   res_predict = helper.getClassPredictImageData(cid,pid)
-  print("HERE .......................")
   return jsonify(res_predict)
 
 
@@ -218,7 +214,6 @@ def Mapper():
   print(res)
   print(len(res['data']))
   for row in res['data']:
-    print(row)
     classes.append(row[0])    
     persons.append(row[1])
     prediction_img_path.append(row[2])
@@ -238,8 +233,8 @@ def Mapper():
   df.to_csv('DataExport.csv')
   return jsonify(res)
 
-@app.route('/nmap', methods=['GET'])
-def nmatch():
+@app.route('/nmap/<pid>', methods=['GET'])
+def nmatch(pid):
   if not isLogin():
     return redirect('/login')
   init_res = {
@@ -247,7 +242,7 @@ def nmatch():
         'data' : (),
         'title': 'Nmatch'
     }
-  res = helper.getAllNmatchData()
+  res = helper.getAllNmatchData(pid)
   if res['status']:
     res['title'] = 'Nmatch'
     return jsonify(res)

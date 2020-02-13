@@ -14,12 +14,8 @@ function nearMatchImgClicked(image_id) {
 function nMapClick() {
   var img_path = $('#predictimage').attr('src')
   $('#nMatchContainer').html('')
-  console.log(img_path);
   
   $.each(nmatch_data, function (indx, row) {
-    console.log("nMap get clicked");
-    console.log(img_path, row[1]);
-    console.log(row[1]==img_path);
     if (row[1]==img_path) {
       var html = `
       <div class="col-sm-2" style="text-align: center;">
@@ -109,7 +105,7 @@ function getnmapdata(){
   $.ajax({
     cache: false,
     type: 'GET',
-    url: getNmapDataUrl(),
+    url: getNmapDataUrl()+'/'+$('#pid').val(),
     xhrFields: {
         // The 'xhrFields' property sets additional fields on the XMLHttpRequest.
         // This can be used to set the 'withCredentials' property.
@@ -121,16 +117,15 @@ function getnmapdata(){
     success: function (json) {
         if (!json.status) {
           console.error('Serverside Error While Geting Nmatched Data');
-          console.error(json.message)
+          console.error(json.msg)
         }
         else {
           nmatch_data = json.data
-          console.log(nmatch_data)
         }
     },
     error: function (data) {
+        console.log(data)
         console.log("Error While Getting Nmatched Data");
-        console.log(data);
     }
   });
 }
@@ -151,11 +146,10 @@ function getOnlyClassEnrollImageData(){
     success: function (json) {
         if (!json.status) {
           console.error('Serverside Error While Geting Enrolled Data For Class');
-          console.error(json.message)
+          console.error(json.msg)
         }
         else {
           enrolled_data = json.data
-          console.log(enrolled_data)
           initEnrolledData()
         }
     },
@@ -185,12 +179,11 @@ function getPredictData(){
     },
     success: function (json) {
         if (!json.status) {
-          console.error('Serverside Error While Geting Predict Data');
-          console.error(json.message)
+          console.error('Serverside Error While Geting Predict Data')
+          console.error(json.msg)
         }
         else {
           predicted_data = json.data
-          console.log(predicted_data)
           initPrediction()
           if(current_page >= predicted_data.length) {$('#previousButton').show();  $('#nextButton').hide()}
           if(current_page <= 1) {$('#previousButton').hide(); $('#nextButton').show()}
@@ -224,17 +217,25 @@ function initEnrolledData() {
 
 function initPrediction() {
   current_page = 1
-  current_data = predicted_data[current_page-1]
+  if(predicted_data.length>0) {
+    current_data = predicted_data[current_page-1]
+  }
+  else {
+    current_data = {}
+  }
   $('#previousButton').hide()
   renderPredictionImage()
 }
 
 function renderPredictionImage() {
-  $('#predictimage').attr('src', current_data[3])
-  var image_parts = current_data[3]?current_data[3].split('/'):[]
-  var name = image_parts.length>0?image_parts[image_parts.length-1]:''
-  $('#predictlabel').html(name)
-  nMapClick()
+  console.log(current_data)
+  if(current_data) {
+    $('#predictimage').attr('src', current_data[3])
+    var image_parts = current_data[3]?current_data[3].split('/'):[]
+    var name = image_parts.length>0?image_parts[image_parts.length-1]:''
+    $('#predictlabel').html(name)
+    nMapClick()
+  }
 }
 
 function predictionImageNextClicked() {
@@ -250,6 +251,7 @@ function predictionImageNextClicked() {
     renderPredictionImage()
   }
 }
+
 function predictionImagePreviousClicked() {
   if(current_page == 1) {
     notifyUser('error', 'Already Showing First Entry!')
@@ -263,6 +265,5 @@ function predictionImagePreviousClicked() {
   }
   
 }
-
 getPredictData()
 getnmapdata()

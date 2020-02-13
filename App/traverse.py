@@ -71,6 +71,8 @@ class Traverse:
         pred_img_path_lis = []
         img_path_lis = []
         indx = []
+        cids = []
+        pids = []
         i = 0
         for predict_path in self.prediction_data:
             
@@ -90,15 +92,21 @@ class Traverse:
                 enroll_data_path = os.path.join(os.path.dirname(__file__), "web","static","dist","image","classes",str(class_id),"enroll_crops",str(dir_name))
                 image_path = self.enroll_folder_path.format(str(class_id),str(dir_name),sorted(os.listdir(enroll_data_path))[0])
                 print(image_path)
-                pred_img_path_lis.append('"'+predict_img_path+'"')
-                img_path_lis.append('"'+image_path+'"')
+                parts_Enrol = image_path.split('/')
+                Pid_enrol = parts_Enrol[6]
+                pred_img_path_lis.append(predict_img_path)
+                img_path_lis.append(image_path)
                 indx.append(i)
+                cids.append(class_id)
+                pids.append(Pid_enrol)
                 #helper.upsertNmatchData(predict_img_path, image_path)
         
         dict ={
-            "idnmapped": indx,
-            "predict_image": pred_img_path_lis,
-            "image_path": img_path_lis,
+            "nid": indx,
+            "image_path": pred_img_path_lis,
+            "nmatch_path": img_path_lis,
+            "cid": cids,
+            "pid": pids
         }
         
         df = pd.DataFrame(dict)

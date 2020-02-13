@@ -7,7 +7,7 @@
 # sudo python setup.py install
 import pymysql
 import odo
-connection_url = 'mysql+pymysql://root:root@localhost/test'
+connection_url = 'mysql+pymysql://root:root@localhost/mydb'
 class DBHelper:
 
   def connect(self):
@@ -127,7 +127,7 @@ class DBHelper:
       predict_image_list = self.cursor.fetchall()
       if len(predict_image_list) <= 0 :
         predict_image_data = {
-          'status':False,
+          'status':True,
           'data':[],
           'msg': 'Predict Image Data Doesnot Exists'
         }
@@ -380,7 +380,8 @@ class DBHelper:
     res = self.getNmatchData(image_path,nmatch_path)
     if res['status']:
       print(res['data'])
-      querry = "UPDATE nearest_match SET image_path=\'{1}\', nmatch_path=\'{2}\' WHERE nid={0}".format(image_path,nmatch_path)
+      nid = res['data'][0]['nid']
+      querry = "UPDATE nearest_match SET image_path=\'{1}\', nmatch_path=\'{2}\' WHERE nid={0}".format(nid,image_path,nmatch_path)
     else:
       querry = "INSERT into nearest_match(image_path, nmatch_path) VALUES(\'{0}\',\'{1}\')".format(image_path,nmatch_path)
     self.connect()
@@ -424,8 +425,9 @@ class DBHelper:
     self.conn.close()
     return nmatch_data
 
-  def getAllNmatchData(self):
-    querry = "SELECT * FROM nearest_match "
+  def getAllNmatchData(self, pid):
+    querry = "SELECT * FROM nearest_match where pid="+pid
+    print(querry)
     self.connect()
     try:
       nmatchs = self.cursor.execute(querry)
@@ -502,4 +504,4 @@ class DBHelper:
   def bulkInsertNearestMatch(self, csv_file):
     #pass
     from odo.backends import sql
-    odo.odo(csv_file, '%s::%s' % (connection_url, 'nmapped'))
+    odo.odo(csv_file, '%s::%s' % (connection_url, 'nearest_match'))
