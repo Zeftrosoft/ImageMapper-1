@@ -28,7 +28,7 @@
       <div class="row">
         <div class="col-md-3">
           <div class="card">
-            <div class="card-body">
+            <div class="card-body" id='predictImageContainer'>
               <a onclick="nMapClick()">
                 <img class="img-fluid" id="predictimage" src="" alt="Photo">
               </a>
@@ -67,16 +67,16 @@
               <div class="card-body">
                 <div class="row" id="enroll_container">
                   {% for row in data.data.enroll%}
-                  <div class="col-sm-2">
-                    <a href="#" onclick="nearMatchImgClicked('enrolled_{{loop.index}}')">
-                    <img class="img-fluid enrolled_images" src="{{row[3]}}" alt="Photo" id='enrolled_{{loop.index}}' >
-                    </a>  
-                    <label style="display: flow-root;" for="user2">
-                      {% if row[3] %}
-                      {{row[3].split('/')[(row[3].split('/')|length)-2]}}
-                      {% endif %}
-                    </label>
-                  </div>
+                    <div class="col-sm-2">
+                      <a href="#" onclick="nearMatchImgClicked('enrolled_{{loop.index}}')">
+                        <img class="img-fluid enrolled_images" src="{{row[3]}}" alt="Photo" id='enrolled_{{loop.index}}' >
+                      </a>  
+                      <label style="display: flow-root;" for="user2">
+                        {% if row[3] %}
+                        {{row[3].split('/')[(row[3].split('/')|length)-2]}}
+                        {% endif %}
+                      </label>
+                    </div>
                   {%endfor%}
                 </div>
               </div>

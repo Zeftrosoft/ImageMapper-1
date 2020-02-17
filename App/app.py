@@ -174,7 +174,7 @@ def person_image_data(cid,pid):
     }
   if not isLogin():
     return jsonify(error_res)
-  res_predict = helper.getClassPredictImageData(cid,pid)
+  res_predict = helper.getClassPredictImageDataLimited(cid,pid)
   return jsonify(res_predict)
 
 
@@ -195,7 +195,7 @@ def postMapper():
     res = helper.upsertMapperData(mapper)
     return jsonify(res)
 
-@app.route('/api/mapper', methods=['GET'])
+@app.route('/api/export', methods=['GET'])
 def Mapper():
   if not isLogin():
     return redirect('/login')
@@ -233,19 +233,27 @@ def Mapper():
   df.to_csv('DataExport.csv')
   return jsonify(res)
 
-@app.route('/nmap/<pid>', methods=['GET'])
-def nmatch(pid):
+@app.route('/nmap', methods=['POST'])
+def nmatch():
   if not isLogin():
     return redirect('/login')
   init_res = {
         'status': False,
         'data' : (),
-        'title': 'Nmatch'
+        'msg': 'Couldnt Get NMapped Data'
     }
-  res = helper.getAllNmatchData(pid)
-  if res['status']:
-    res['title'] = 'Nmatch'
-    return jsonify(res)
+  if request.method == 'POST':
+    pred_path = request.form['pred_path']
+    if(pred_path):
+      res = helper.getAllNmatchData(pred_path)
+      if res['status']:
+        return jsonify(res)
+      else: 
+        return jsonify(init_res)
+    else: 
+      init_res['msg'] = 'Body must contain prediction image path'
+      return jsonify(init_res)
+    
  
 @app.route('/logout')
 def logout():
@@ -270,8 +278,8 @@ def getMailIdFromSession():
 
 def folder_scan():
   pass
-  help_scan.data_struct()
-  help_scan.scan_json()
+  # help_scan.data_struct()
+  # help_scan.scan_json()
 
 if __name__ == "__main__":
   #folder_scan()

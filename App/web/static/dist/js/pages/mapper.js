@@ -11,12 +11,11 @@ function nearMatchImgClicked(image_id) {
   console.log('#'+image_id);
 }
 
-function nMapClick() {
-  var img_path = $('#predictimage').attr('src')
+function displayNearestMatches() {
   $('#nMatchContainer').html('')
+  console.log(nmatch_data);
   
   $.each(nmatch_data, function (indx, row) {
-    if (row[1]==img_path) {
       var html = `
       <div class="col-sm-2" style="text-align: center;">
         <a href="#" onclick="nearMatchImgClicked('near_${indx}')">
@@ -28,9 +27,6 @@ function nMapClick() {
       </div>
       `
       $('#nMatchContainer').append(html)
-    } 
-  
-    
   })
   
 
@@ -101,11 +97,12 @@ function  getOnlyClassEnrollImageDataUrl() {
   return used_host + '/api/class/enrolled/'
 }
 
-function getnmapdata(){
+function getnmapdata(pred_path){
   $.ajax({
     cache: false,
-    type: 'GET',
-    url: getNmapDataUrl()+'/'+$('#pid').val(),
+    type: 'POST',
+    url: getNmapDataUrl(),
+    data: {'pred_path': pred_path},
     xhrFields: {
         // The 'xhrFields' property sets additional fields on the XMLHttpRequest.
         // This can be used to set the 'withCredentials' property.
@@ -121,6 +118,7 @@ function getnmapdata(){
         }
         else {
           nmatch_data = json.data
+          displayNearestMatches()
         }
     },
     error: function (data) {
@@ -184,10 +182,16 @@ function getPredictData(){
         }
         else {
           predicted_data = json.data
-          initPrediction()
-          if(current_page >= predicted_data.length) {$('#previousButton').show();  $('#nextButton').hide()}
-          if(current_page <= 1) {$('#previousButton').hide(); $('#nextButton').show()}
-          else { $('#previousButton').show(); $('#nextButton').show() }
+          if(predicted_data.length>0) {
+            initPrediction()
+            if(current_page >= predicted_data.length) {$('#previousButton').show();  $('#nextButton').hide()}
+            if(current_page <= 1) {$('#previousButton').hide(); $('#nextButton').show()}
+            else { $('#previousButton').show(); $('#nextButton').show() }
+          } else {
+            $('#predictImageContainer').html(`
+              <h2>No Unmapped Data Present</h2>
+            `)
+          }
         }
     },
     error: function (data) {
@@ -228,13 +232,13 @@ function initPrediction() {
 }
 
 function renderPredictionImage() {
-  console.log(current_data)
   if(current_data) {
     $('#predictimage').attr('src', current_data[3])
     var image_parts = current_data[3]?current_data[3].split('/'):[]
     var name = image_parts.length>0?image_parts[image_parts.length-1]:''
     $('#predictlabel').html(name)
-    nMapClick()
+    getnmapdata(current_data[3])
+    displayNearestMatches()
   }
 }
 
@@ -266,4 +270,3 @@ function predictionImagePreviousClicked() {
   
 }
 getPredictData()
-getnmapdata()
