@@ -127,6 +127,6 @@ class Traverse:
 
 if __name__ == "__main__":
     traverse = Traverse()
-    #traverse.data_struct()
+    traverse.data_struct()
     traverse.scan_json()
                 

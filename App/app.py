@@ -231,7 +231,7 @@ def Mapper():
 
   df = pd.DataFrame(dict)
   df.to_csv('DataExport.csv')
-  return jsonify(res)
+  return jsonify({"status":true, "message": "Done Exporting At DataExport.csv"})
 
 @app.route('/nmap', methods=['POST'])
 def nmatch():
