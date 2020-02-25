@@ -22,10 +22,7 @@ def index():
   else:
     email = session['email']
     return render_template('logout.html', data=email)
-  # if 'email' in session:
-  #   email = session['email']
-  #   return 'Logged in as ' + email + '<br>' + "<b><a href = '/logout'>click here to log out</a></b>"
-  # return "You are not logged in <br><a href = '/login'></b>" + "click here to log in</b></a>"
+ 
 
 @app.route('/login', methods=['GET','POST'])
 def login():
@@ -179,8 +176,6 @@ def person_image_data(cid,pid):
 
 
 
-# @app.route('/mapper', methods=['POST'])
-# def Mappeerdata():
 @app.route('/mapper', methods=['POST'])
 def postMapper():
   if request.method == 'POST':
@@ -211,7 +206,6 @@ def Mapper():
   enroll_img_path = []
   isSkipped = []
   isNotEnrolled = []
-  print(res)
   print(len(res['data']))
   for row in res['data']:
     classes.append(row[0])    
@@ -276,11 +270,5 @@ def getMailIdFromSession():
   else: 
     return ''
 
-def folder_scan():
-  pass
-  # help_scan.data_struct()
-  # help_scan.scan_json()
-
 if __name__ == "__main__":
-  #folder_scan()
-  app.run(debug=True,host="0.0.0.0")
+  app.run(debug=True, host="0.0.0.0")

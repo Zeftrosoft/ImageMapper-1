@@ -264,7 +264,7 @@ class DBHelper:
         res = self.getMapperData(
             mapper['cid'], mapper['pid'], mapper['prediction_img_path'], mapper['enroll_img_path'])
         if res['status']:
-            print(res['data'])
+            print("Mapper data: ", len(res['data']))
             querry = "UPDATE mapper SET cid={1},pid={2},prediction_img_path=\'{3}\', enroll_img_path=\'{4}\', isSkipped={5}, isNotEnrolled={6} WHERE mapid={0}".format(
                 res['data'][0], mapper['cid'], mapper['pid'], mapper['prediction_img_path'], mapper['enroll_img_path'], mapper['isSkipped'], mapper['isNotEnrolled'])
         else:
@@ -401,7 +401,7 @@ class DBHelper:
     def upsertGlobalSessionData(self, email, pid):
         res = self.getGlobalSessionData(email)
         if res['status']:
-            print(res['data'])
+            print("GlobalSession data length: ", len(res['data']))
             querry = "UPDATE global_session SET pid={0} WHERE email=\'{1}\'".format(
                 pid, email)
         else:
@@ -426,7 +426,7 @@ class DBHelper:
     def upsertNmatchData(self, image_path, nmatch_path):
         res = self.getNmatchData(image_path, nmatch_path)
         if res['status']:
-            print(res['data'])
+            print("Nmstch Data Length: ", len(res['data']))
             nid = res['data'][0]['nid']
             querry = "UPDATE nearest_match SET image_path=\'{1}\', nmatch_path=\'{2}\' WHERE nid={0}".format(
                 nid, image_path, nmatch_path)

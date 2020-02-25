@@ -8,12 +8,12 @@ var current_data = {}
 function nearMatchImgClicked(image_id) {
   $('.person_images, .enrolled_images').removeClass('active_img');
   $('#'+image_id).addClass('active_img');
-  console.log('#'+image_id);
+ 
 }
 
 function displayNearestMatches() {
   $('#nMatchContainer').html('')
-  console.log(nmatch_data);
+  console.log("nmatch_data Length: ", nmatch_data.length);
   
   $.each(nmatch_data, function (indx, row) {
       var html = `
@@ -61,7 +61,7 @@ function postData(data) {
     error: function (data) {
       notifyUser('error', 'Error Saving Mapping')
         console.log("Error Saving Mapping");
-        console.log(data);
+        console.log("Mapping data length: ", data.length);
     }
   });
 }
@@ -122,7 +122,7 @@ function getnmapdata(pred_path){
         }
     },
     error: function (data) {
-        console.log(data)
+        console.log("nmatch data length: ", data.length)
         console.log("Error While Getting Nmatched Data");
     }
   });
@@ -153,7 +153,7 @@ function getOnlyClassEnrollImageData(){
     },
     error: function (data) {
         console.log("Error While Getting Enrolled Data For Class");
-        console.log(data);
+        console.log("Enroll data Length: ", data.length);
     }
   });
 }
@@ -196,7 +196,7 @@ function getPredictData(){
     },
     error: function (data) {
         console.log("Error While Getting predict Data");
-        console.log(data);
+        console.log("Predict Data Length: ", data.length);
     }
   });
 }

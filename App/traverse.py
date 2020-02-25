@@ -76,9 +76,7 @@ class Traverse:
         i = 0
         for predict_path in self.prediction_data:
             
-            # prediction = {}
-            # prediction['image_path'] = self.correct_image_path(predict_path['image_path'])
-            # prediction['recognised_images'] = []
+           
             parts = predict_path['image_path'].split('/')
             class_id = parts[2]
             person_id = parts[4]
